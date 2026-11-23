@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><h2>{{ t.welcome }}</h2><p class="lede mb-0">{{ t.tagline }}</p></div>
+
+<div class="card wine-card mb-4">
+<div class="row g-0 stat-band">
+<div class="col-md-4 stat">
+<div class="stat-label">{{ t.wines_tasted }}</div>
+<div class="stat-value">{{ count }}</div>
+</div>
+<div class="col-md-4 stat">
+<div class="stat-label">{{ t.average_score }}</div>
+<div class="stat-value">{{ average }} <small>/ 100</small></div>
+</div>
+<div class="col-md-4 stat d-flex align-items-center">
+<a class="btn btn-wine w-100" href="{{ url_for('add_wine') }}">{{ t.add_wine }}</a>
+</div>
+</div>
+</div>
+
+<div class="card wine-card p-4 mb-4">
+<h3 class="mb-3">{{ t.recent_tastings }}</h3>
+<canvas id="scoreChart" height="110"></canvas>
+</div>
+
+<div class="card wine-card p-4">
+<h3 class="mb-2">{{ t.recent_tastings }}</h3>
+{% for tasting in recent %}
+<div class="d-flex justify-content-between align-items-center py-3 {% if not loop.first %}border-top{% endif %}" style="border-color:var(--line)!important">
+<div>
+<a class="text-decoration-none fw-medium" style="color:var(--ink)"
+   href="{{ url_for('wine_detail', wine_id=tasting.wine_id) }}">
+{{ tasting.wine.name }}
+</a>
+<div class="text-muted small">{{ tasting.tasted_at.strftime('%Y-%m-%d') }}</div>
+</div>
+<span class="score">{{ tasting.score }}<small>/100</small></span>
+</div>
+{% else %}
+<p class="lede mb-0">{{ t.no_wines }}</p>
+{% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const labels = {{ recent | map(attribute='wine.name') | list | tojson }};
+const scores = {{ recent | map(attribute='score') | list | tojson }};
+Chart.defaults.font.family = "'Jost', sans-serif";
+Chart.defaults.color = '#756e66';
+new Chart(document.getElementById('scoreChart'), {
+  type: 'bar',
+  data: {
+    labels: labels,
+    datasets: [{
+      label: 'Score / 100',
+      data: scores,
+      backgroundColor: '#5b1f33',
+      borderRadius: 2,
+      maxBarThickness: 34
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false } },
+      y: { min: 0, max: 100, grid: { color: '#e1d8cb' }, border: { display: false } }
+    }
+  }
+});
+</script>
+{% endblock %}

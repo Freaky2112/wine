@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><h2 class="mb-0">{{ t.users }}</h2></div>
+
+<div class="card wine-card p-4 mb-4">
+<h3 class="mb-3">{{ t.new_user }}</h3>
+<form method="POST" autocomplete="off">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<div class="row g-3">
+<div class="col-md-6">
+<label class="form-label">{{ t.username }}</label>
+<input class="form-control" name="username" minlength="3" maxlength="80" required>
+</div>
+<div class="col-md-6">
+<label class="form-label">{{ t.email }}</label>
+<input class="form-control" type="email" name="email" maxlength="180" required>
+</div>
+<div class="col-md-6">
+<label class="form-label">{{ t.password }}</label>
+<input class="form-control" type="password" name="password" minlength="12" autocomplete="new-password" required>
+</div>
+<div class="col-md-6">
+<label class="form-label">{{ t.language }}</label>
+<select class="form-select" name="language">
+<option value="fr">Français</option>
+<option value="en">English</option>
+</select>
+</div>
+<div class="col-12">
+<div class="form-check">
+<input class="form-check-input" type="checkbox" name="is_admin" id="is_admin">
+<label class="form-check-label" for="is_admin">{{ t.role_admin }}</label>
+</div>
+</div>
+</div>
+<button class="btn btn-wine mt-4">{{ t.new_user }}</button>
+</form>
+</div>
+
+<div class="card wine-card p-4">
+{% for u in users %}
+<div class="d-flex justify-content-between align-items-center py-3 {% if not loop.first %}border-top{% endif %}" style="border-color:var(--line)!important">
+<div>
+<div class="fw-medium">{{ u.username }}</div>
+<div class="text-muted small">{{ u.email }} · {{ t.created }} {{ u.created_at.strftime('%Y-%m-%d') if u.created_at }}</div>
+</div>
+<div class="text-end">
+<div class="type-tag mb-1">{{ t.role_admin if u.is_admin else t.role_member }}{% if u.id == current_user.id %} ({{ t.you }}){% endif %}</div>
+{% if u.id != current_user.id %}
+<form method="POST" action="{{ url_for('admin_toggle_role', user_id=u.id) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<button class="btn btn-outline-dark btn-sm">{{ t.remove_admin if u.is_admin else t.make_admin }}</button>
+</form>
+{% endif %}
+</div>
+</div>
+{% endfor %}
+</div>
+{% endblock %}

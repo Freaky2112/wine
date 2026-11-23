@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#27121a">
+<title>{% block title %}Wine Journal{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+:root{--wine:#5b1f33;--wine-deep:#27121a;--gold:#b59563;--gold-ink:#7d6238;--paper:#f4f0ea;--card:#fbf9f5;--ink:#26211f;--muted:#756e66;--line:#e1d8cb}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:'Jost',system-ui,sans-serif;font-size:15.5px;line-height:1.65;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom)}
+h1,h2,h3,h4,h5,.navbar-brand,.stat-value,.score{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;letter-spacing:0;line-height:1.15}
+h2{font-size:clamp(2.1rem,7vw,3rem);margin-bottom:.35rem}h3{font-size:1.75rem}h5{font-size:1.4rem;margin-bottom:.2rem}
+.lede{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:1.2rem;color:var(--muted)}
+
+/* nav */
+.navbar{background:var(--wine-deep);padding:.9rem 0;border-bottom:1px solid #b5956355}
+.navbar-brand{font-size:1.65rem;color:#f6efe4!important;letter-spacing:.01em}.navbar-brand span{color:var(--gold);font-style:italic}
+.navbar-toggler{border-color:#ffffff44}.navbar-toggler:focus{box-shadow:0 0 0 .2rem #b5956344}.navbar-toggler-icon{filter:invert(1)}
+.nav-link{color:#eadfd2!important;font-size:.95rem;padding:.6rem .8rem!important;border-radius:4px}.nav-link:hover,.nav-link:focus-visible{color:var(--gold)!important}
+
+/* layout */
+main.container{max-width:1100px;padding-top:.5rem}
+.page-head{border-bottom:1px solid var(--line);padding-bottom:1.25rem;margin-bottom:1.75rem}
+.card,.wine-card{background:var(--card);border:1px solid var(--line);border-radius:6px;box-shadow:none!important}
+.stat-band .stat{padding:1.5rem 1.5rem}.stat-band .stat+.stat{border-top:1px solid var(--line)}
+@media(min-width:768px){.stat-band .stat+.stat{border-top:0;border-left:1px solid var(--line)}}
+.stat-label{color:var(--muted);font-size:.9rem}.stat-value{font-size:3rem;color:var(--wine);font-weight:500}.stat-value small{font-size:1.1rem;color:var(--muted);font-family:'Jost',sans-serif}
+
+/* buttons + forms */
+.btn{border-radius:4px;font-weight:500;letter-spacing:.03em;padding:.65rem 1.25rem}
+.btn-wine{background:var(--wine);border:1px solid var(--wine);color:#f6efe4}.btn-wine:hover,.btn-wine:focus{background:var(--wine-deep);border-color:var(--wine-deep);color:#f6efe4}
+.btn-outline-dark{border-color:var(--wine);color:var(--wine)}.btn-outline-dark:hover{background:var(--wine);border-color:var(--wine);color:#f6efe4}
+.form-control,.form-select{min-height:46px;border:1px solid #d9cfc0;border-radius:4px;background:#fff;color:var(--ink)}
+.form-control:focus,.form-select:focus{border-color:var(--gold);box-shadow:0 0 0 .2rem #b5956330}
+textarea.form-control{min-height:84px}
+.form-label{font-size:.88rem;color:var(--muted);margin-bottom:.3rem}
+.btn:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* wine bits */
+.wine-photo{width:100%;height:220px;object-fit:cover;border-radius:6px 6px 0 0;background:#eee8df}
+.detail-photo{max-height:380px;width:100%;object-fit:contain;background:#f1ece3;border-radius:4px}
+.wine-title{font-size:1.55rem;margin-bottom:.1rem}
+.wine-title a{color:var(--ink);text-decoration:none}.wine-title a:hover{color:var(--wine)}
+.producer{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:1.15rem;color:var(--muted)}
+.meta{color:var(--muted);font-size:.9rem;margin:0}
+.type-tag{display:inline-flex;align-items:center;gap:.45rem;font-size:.85rem;color:var(--muted)}
+.dot{width:.65rem;height:.65rem;border-radius:50%;background:#999;display:inline-block}
+.dot-red{background:#6b1d2e}.dot-white{background:#d8c98c}.dot-rose{background:#e0a0a6}.dot-sparkling{background:#c9bb86;box-shadow:0 0 0 2px #fbf9f5,0 0 0 3px #c9bb86}
+.score{color:var(--wine);font-size:1.8rem;font-weight:600;white-space:nowrap}.score small{font-family:'Jost',sans-serif;font-size:.8rem;color:var(--muted);font-weight:400}
+.tn{padding:.55rem 0;border-top:1px solid var(--line)}.tn-label{display:block;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:1.05rem;color:var(--gold-ink)}
+.rule{border:0;border-top:1px solid var(--line);margin:1.5rem 0}
+
+/* misc */
+.text-muted{color:var(--muted)!important}a{color:var(--wine)}a:hover{color:#8b3a52}canvas{max-width:100%}
+.alert{border:0;border-left:3px solid var(--gold);border-radius:4px;background:#f0e8d9;color:var(--ink)}
+footer{color:var(--muted);font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:1.05rem;text-align:center;padding:2.5rem 1rem calc(2.5rem + env(safe-area-inset-bottom))}
+@media(max-width:767.98px){
+ body{font-size:15px}
+ main.container{padding:.25rem 1rem 2rem}.navbar .container{padding-left:1rem;padding-right:1rem}
+ .navbar-collapse{padding:.65rem 0 .25rem}.nav-link{padding:.7rem .5rem!important;border-top:1px solid #ffffff12}
+ .form-control,.form-select{font-size:16px}
+ .btn{min-height:46px}.input-group>.form-control{min-width:0}
+ .p-4{padding:1.25rem!important}.wine-photo{height:200px}.stat-value{font-size:2.6rem}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style></head>
+<body>
+<nav class="navbar navbar-expand-lg mb-4"><div class="container">
+<a class="navbar-brand" href="{{ url_for('dashboard') }}">{{ t.app_name }}</a>
+{% if current_user.is_authenticated %}
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+<div class="collapse navbar-collapse" id="mainNav"><div class="navbar-nav ms-auto align-items-lg-center">
+<a class="nav-link" href="{{ url_for('dashboard') }}">{{ t.dashboard }}</a><a class="nav-link" href="{{ url_for('wines') }}">{{ t.my_wines }}</a>
+<a class="nav-link" href="{{ url_for('add_wine') }}">{{ t.add_wine }}</a><a class="nav-link" href="{{ url_for('export_csv') }}">CSV</a>{% if current_user.is_admin %}<a class="nav-link" href="{{ url_for('admin_users') }}">{{ t.users }}</a>{% endif %}
+<a class="nav-link" href="{{ url_for('change_language', language='en') }}">EN</a><a class="nav-link" href="{{ url_for('change_language', language='fr') }}">FR</a><a class="nav-link" href="{{ url_for('logout') }}">{{ t.logout }}</a>
+</div></div>{% endif %}</div></nav>
+<main class="container pb-5">{% with messages = get_flashed_messages() %}{% for message in messages %}<div class="alert alert-info">{{ message }}</div>{% endfor %}{% endwith %}{% block content %}{% endblock %}</main>
+<footer>{{ t.footer }}</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>{% block scripts %}{% endblock %}
+</body></html>

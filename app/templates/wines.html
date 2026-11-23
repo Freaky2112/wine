@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head d-flex flex-wrap justify-content-between align-items-end gap-3">
+<h2 class="mb-0">{{ t.my_wines }}</h2>
+<a class="btn btn-wine" href="{{ url_for('add_wine') }}">{{ t.add_wine }}</a>
+</div>
+
+<form method="GET" class="mb-4">
+<div class="input-group">
+<input class="form-control" name="q" value="{{ search }}" placeholder="{{ t.search }}">
+<button class="btn btn-wine">{{ t.search_btn }}</button>
+</div>
+</form>
+
+<div class="row g-3">
+{% for wine in wines %}
+<div class="col-md-6 col-lg-4">
+<div class="card wine-card h-100 position-relative">
+{% if wine.photo %}
+<img src="{{ url_for('static', filename='uploads/' + wine.photo) }}" class="wine-photo" alt="">
+{% endif %}
+<div class="p-3">
+<div class="type-tag mb-2"><span class="dot dot-{{ wine.wine_type }}"></span>{{ t.get(wine.wine_type, wine.wine_type) }}</div>
+<h5 class="wine-title"><a class="stretched-link" href="{{ url_for('wine_detail', wine_id=wine.id) }}">{{ wine.name }}</a></h5>
+{% if wine.producer %}<div class="producer">{{ wine.producer }}</div>{% endif %}
+<p class="meta mt-2">{{ [wine.region, wine.country]|select|join(', ') }}</p>
+<p class="meta">{{ [wine.vintage, wine.grape]|select|join(' · ') }}</p>
+</div>
+</div>
+</div>
+{% else %}
+<p class="lede">{{ t.no_wines }}</p>
+{% endfor %}
+</div>
+{% endblock %}

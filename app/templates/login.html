@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center mt-4 mt-md-5">
+<div class="col-md-6 col-lg-5">
+<div class="card wine-card p-4">
+<h2 class="mb-4">{{ t.login }}</h2>
+<form method="POST">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<div class="mb-3">
+<label class="form-label">{{ t.email }}</label>
+<input class="form-control" type="email" name="email" required>
+</div>
+<div class="mb-3">
+<label class="form-label">{{ t.password }}</label>
+<input class="form-control" type="password" name="password" required>
+</div>
+<button class="btn btn-wine w-100 mt-2">{{ t.login }}</button>
+</form>
+</div>
+</div>
+</div>
+{% endblock %}

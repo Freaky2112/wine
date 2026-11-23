@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card wine-card p-4 mb-4">
+{% if wine.photo %}
+<img src="{{ url_for('static', filename='uploads/' + wine.photo) }}" class="detail-photo mb-4" alt="">
+{% endif %}
+<div class="type-tag mb-2"><span class="dot dot-{{ wine.wine_type }}"></span>{{ t.get(wine.wine_type, wine.wine_type) }}</div>
+<h2>{{ wine.name }}</h2>
+{% if wine.producer %}<div class="producer mb-3">{{ wine.producer }}</div>{% endif %}
+<p class="meta">{{ [wine.country, wine.region, wine.appellation]|select|join(' · ') }}</p>
+<p class="meta">{{ [wine.grape, wine.vintage]|select|join(' · ') }}</p>
+<p class="meta">{% if wine.alcohol %}{{ wine.alcohol }}%{% endif %}{% if wine.alcohol and wine.price %} · {% endif %}{% if wine.price %}{{ wine.price }} {{ wine.currency }}{% endif %}</p>
+
+<hr class="rule">
+<form method="POST" enctype="multipart/form-data"
+      action="{{ url_for('upload_photo', wine_id=wine.id) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label class="form-label">{{ t.photo_label }}</label>
+<input type="file" class="form-control mb-2" name="photo" accept="image/*" required>
+<button class="btn btn-outline-dark">{{ t.upload_photo }}</button>
+</form>
+</div>
+
+<div class="card wine-card p-4 mb-4">
+<h3 class="mb-3">{{ t.add_tasting }}</h3>
+<form method="POST" action="{{ url_for('add_tasting', wine_id=wine.id) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+<label class="form-label">{{ t.rating }}</label>
+<input type="number" class="form-control mb-3" name="score"
+       min="0" max="100" required>
+
+{% for field,label in [
+('appearance',t.appearance),('nose',t.nose),('palate',t.palate),
+('finish',t.finish),('food_pairing',t.food),('comments',t.comments)
+] %}
+<div class="mb-3">
+<label class="form-label">{{ label }}</label>
+<textarea class="form-control" name="{{ field }}" rows="2"></textarea>
+</div>
+{% endfor %}
+
+<div class="row g-2 mb-3">
+{% for field,label in [('acidity',t.acidity),('tannins',t.tannins),('body',t.body)] %}
+<div class="col-4">
+<label class="form-label">{{ label }}</label>
+<select class="form-select" name="{{ field }}">
+<option value="">--</option>
+<option value="Low">{{ t.low }}</option><option value="Medium">{{ t.medium }}</option><option value="High">{{ t.high }}</option>
+</select>
+</div>
+{% endfor %}
+</div>
+
+<button class="btn btn-wine">{{ t.save }}</button>
+</form>
+</div>
+
+<h3 class="mb-3">{{ t.recent_tastings }}</h3>
+{% for tasting in wine.tastings %}
+<div class="card wine-card p-4 mb-3">
+<div class="d-flex justify-content-between align-items-baseline mb-2">
+<h5 class="mb-0">{{ tasting.tasted_at.strftime('%Y-%m-%d') }}</h5>
+<span class="score">{{ tasting.score }}<small>/100</small></span>
+</div>
+{% for field,label in [
+('appearance',t.appearance),('nose',t.nose),('palate',t.palate),
+('finish',t.finish),('food_pairing',t.food),('comments',t.comments)
+] %}
+{% set value = tasting|attr(field) %}
+{% if value %}
+<div class="tn"><span class="tn-label">{{ label }}</span>{{ value }}</div>
+{% endif %}
+{% endfor %}
+</div>
+{% else %}
+<p class="lede">{{ t.no_tastings }}</p>
+{% endfor %}
+{% endblock %}
